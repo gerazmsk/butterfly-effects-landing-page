@@ -350,9 +350,19 @@ section {
 }
 
 .feature-icon {
-    font-size: 32px;
     margin-bottom: 16px;
-    color: #96BCD9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 60px;
+}
+
+.feature-icon img {
+    max-width: 100%;
+    max-height: 60px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
 }
 
 .feature-card h3 {
@@ -580,6 +590,9 @@ section {
     grid-template-columns: 1fr;
     gap: 32px;
     margin-bottom: 40px;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .team-card {
@@ -601,6 +614,12 @@ section {
     border-radius: 50%;
     margin: 0 auto 20px;
     object-fit: cover;
+    background: #fff;
+}
+
+.team-card img[src$=".svg"] {
+    object-fit: contain;
+    padding: 10px;
 }
 
 .team-card h3 {
