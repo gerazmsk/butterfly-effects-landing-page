@@ -18,8 +18,8 @@ html {
 }
 
 body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    color: #1B273A;
+    font-family: "Open Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #2E334A;
     line-height: 1.6;
     font-size: 16px;
     overflow-x: hidden;
@@ -82,9 +82,14 @@ section {
 }
 
 .logo {
-    font-size: 24px;
-    font-weight: 700;
-    color: #0050A4;
+    display: flex;
+    align-items: center;
+}
+
+.logo-img {
+    height: 50px;
+    width: auto;
+    max-width: 200px;
 }
 
 .nav-menu {
@@ -116,11 +121,11 @@ section {
 }
 
 .nav-menu a:hover {
-    color: #0050A4;
+    color: #2E334A;
 }
 
 .nav-cta {
-    background: #0050A4;
+    background: #2E334A;
     color: #fff !important;
     padding: 10px 20px;
     border-radius: 12px;
@@ -128,7 +133,7 @@ section {
 }
 
 .nav-cta:hover {
-    background: #003d7a;
+    background: #1a1f2e;
 }
 
 .nav-toggle {
@@ -144,7 +149,7 @@ section {
 .nav-toggle span {
     width: 24px;
     height: 2px;
-    background: #0050A4;
+    background: #2E334A;
     transition: all 0.3s;
 }
 
@@ -180,24 +185,24 @@ section {
 }
 
 .btn-primary {
-    background: #0050A4;
+    background: #2E334A;
     color: #fff;
 }
 
 .btn-primary:hover {
-    background: #003d7a;
+    background: #1a1f2e;
     transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(0,80,164,0.2);
+    box-shadow: 0 10px 20px rgba(46,51,74,0.2);
 }
 
 .btn-secondary {
     background: #fff;
-    color: #0050A4;
-    border-color: #0050A4;
+    color: #2E334A;
+    border-color: #2E334A;
 }
 
 .btn-secondary:hover {
-    background: #F7FBFF;
+    background: #E0E9F2;
     transform: translateY(-2px);
 }
 
@@ -211,7 +216,7 @@ section {
    ============================================ */
 
 .hero {
-    background: linear-gradient(135deg, #E6F3FF 0%, #fff 100%);
+    background: linear-gradient(135deg, #E0E9F2 0%, #fff 100%);
     padding: 40px 20px;
 }
 
@@ -229,23 +234,24 @@ section {
 
 .hero h1 {
     font-size: 26px;
-    color: #0050A4;
+    color: #2E334A;
     margin-bottom: 16px;
     line-height: 1.2;
 }
 
 .hero-subheadline {
     font-size: 18px;
-    color: #00AEEF;
+    color: #96BCD9;
     font-weight: 600;
     margin-bottom: 16px;
 }
 
 .hero-body {
     font-size: 16px;
-    color: #6A7A92;
+    color: #2E334A;
     margin-bottom: 32px;
     line-height: 1.7;
+    opacity: 0.8;
 }
 
 .hero-buttons {
@@ -313,12 +319,12 @@ section {
    ============================================ */
 
 .why-choose-us {
-    background: #F7FBFF;
+    background: #E0E9F2;
 }
 
 .why-choose-us h2 {
     font-size: 22px;
-    color: #0050A4;
+    color: #2E334A;
     text-align: center;
     margin-bottom: 40px;
 }
@@ -346,18 +352,19 @@ section {
 .feature-icon {
     font-size: 32px;
     margin-bottom: 16px;
-    color: #00AEEF;
+    color: #96BCD9;
 }
 
 .feature-card h3 {
     font-size: 20px;
-    color: #1B273A;
+    color: #2E334A;
     margin-bottom: 12px;
 }
 
 .feature-card p {
-    color: #6A7A92;
+    color: #2E334A;
     line-height: 1.7;
+    opacity: 0.8;
 }
 
 .section-cta {
@@ -406,16 +413,17 @@ section {
 
 .column-text h2 {
     font-size: 22px;
-    color: #0050A4;
+    color: #2E334A;
     margin-bottom: 20px;
     line-height: 1.3;
 }
 
 .column-text p {
     font-size: 16px;
-    color: #6A7A92;
+    color: #2E334A;
     margin-bottom: 24px;
     line-height: 1.7;
+    opacity: 0.8;
 }
 
 .benefits-list {
@@ -426,7 +434,7 @@ section {
     padding: 12px 0;
     padding-left: 32px;
     position: relative;
-    color: #1B273A;
+    color: #2E334A;
     font-size: 16px;
 }
 
@@ -434,7 +442,7 @@ section {
     content: "✓";
     position: absolute;
     left: 0;
-    color: #00AEEF;
+    color: #96BCD9;
     font-weight: bold;
     font-size: 20px;
 }
@@ -479,12 +487,12 @@ section {
    ============================================ */
 
 .process {
-    background: #E6F3FF;
+    background: #E0E9F2;
 }
 
 .process h2 {
     font-size: 22px;
-    color: #0050A4;
+    color: #2E334A;
     text-align: center;
     margin-bottom: 40px;
 }
@@ -506,7 +514,7 @@ section {
     flex-shrink: 0;
     width: 60px;
     height: 60px;
-    background: #0050A4;
+    background: #2E334A;
     color: #fff;
     border-radius: 50%;
     display: flex;
@@ -524,13 +532,14 @@ section {
 
 .timeline-content h3 {
     font-size: 20px;
-    color: #1B273A;
+    color: #2E334A;
     margin-bottom: 8px;
 }
 
 .timeline-content p {
-    color: #6A7A92;
+    color: #2E334A;
     line-height: 1.7;
+    opacity: 0.8;
 }
 
 @media (min-width: 768px) {
@@ -561,7 +570,7 @@ section {
 
 .team h2 {
     font-size: 22px;
-    color: #0050A4;
+    color: #2E334A;
     text-align: center;
     margin-bottom: 40px;
 }
@@ -575,7 +584,7 @@ section {
 
 .team-card {
     text-align: center;
-    background: #F7FBFF;
+    background: #E0E9F2;
     padding: 32px;
     border-radius: 16px;
     box-shadow: 0 10px 20px rgba(0,0,0,0.04);
@@ -596,12 +605,12 @@ section {
 
 .team-card h3 {
     font-size: 20px;
-    color: #1B273A;
+    color: #2E334A;
     margin-bottom: 8px;
 }
 
 .team-role {
-    color: #00AEEF;
+    color: #96BCD9;
     font-weight: 600;
     font-size: 16px;
 }
@@ -631,12 +640,12 @@ section {
    ============================================ */
 
 .testimonials {
-    background: #F7FBFF;
+    background: #E0E9F2;
 }
 
 .testimonials h2 {
     font-size: 22px;
-    color: #0050A4;
+    color: #2E334A;
     text-align: center;
     margin-bottom: 40px;
 }
@@ -662,21 +671,21 @@ section {
     top: 16px;
     left: 24px;
     font-size: 64px;
-    color: #E6F3FF;
+    color: #E0E9F2;
     line-height: 1;
     font-family: Georgia, serif;
 }
 
 .testimonial-text {
     font-size: 16px;
-    color: #1B273A;
+    color: #2E334A;
     line-height: 1.7;
     margin-bottom: 16px;
     padding-top: 16px;
 }
 
 .testimonial-author {
-    color: #00AEEF;
+    color: #96BCD9;
     font-weight: 600;
     font-size: 14px;
 }
@@ -715,7 +724,7 @@ section {
 
 .faq h2 {
     font-size: 22px;
-    color: #0050A4;
+    color: #2E334A;
     text-align: center;
     margin-bottom: 40px;
 }
@@ -728,7 +737,7 @@ section {
 }
 
 .faq-item {
-    background: #F7FBFF;
+    background: #E0E9F2;
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 4px 10px rgba(0,0,0,0.04);
@@ -742,7 +751,7 @@ section {
     text-align: left;
     font-size: 18px;
     font-weight: 600;
-    color: #1B273A;
+    color: #2E334A;
     cursor: pointer;
     display: flex;
     justify-content: space-between;
@@ -753,17 +762,17 @@ section {
 }
 
 .faq-question:hover {
-    background: #E6F3FF;
+    background: #D1D2D4;
 }
 
 .faq-question:focus {
-    outline: 2px solid #0050A4;
+    outline: 2px solid #2E334A;
     outline-offset: -2px;
 }
 
 .faq-icon {
     font-size: 24px;
-    color: #0050A4;
+    color: #2E334A;
     font-weight: 300;
     transition: transform 0.3s;
     flex-shrink: 0;
@@ -786,9 +795,10 @@ section {
 }
 
 .faq-answer p {
-    color: #6A7A92;
+    color: #2E334A;
     line-height: 1.7;
     font-size: 16px;
+    opacity: 0.8;
 }
 
 @media (min-width: 768px) {
@@ -816,12 +826,12 @@ section {
    ============================================ */
 
 .contact {
-    background: #E6F3FF;
+    background: #E0E9F2;
 }
 
 .contact h2 {
     font-size: 22px;
-    color: #0050A4;
+    color: #2E334A;
     text-align: center;
     margin-bottom: 40px;
 }
@@ -843,24 +853,25 @@ section {
 
 .contact-item h3 {
     font-size: 20px;
-    color: #0050A4;
+    color: #2E334A;
     margin-bottom: 12px;
 }
 
 .contact-item p {
-    color: #6A7A92;
+    color: #2E334A;
     line-height: 1.7;
     font-size: 16px;
+    opacity: 0.8;
 }
 
 .contact-item a {
-    color: #0050A4;
+    color: #2E334A;
     text-decoration: underline;
     transition: color 0.3s;
 }
 
 .contact-item a:hover {
-    color: #003d7a;
+    color: #96BCD9;
 }
 
 .contact-cta {
@@ -918,7 +929,7 @@ section {
 }
 
 .footer-links a {
-    color: #00AEEF;
+    color: #96BCD9;
     transition: color 0.3s;
 }
 
@@ -930,9 +941,117 @@ section {
    ACCESSIBILITY IMPROVEMENTS
    ============================================ */
 
+/* ============================================
+   INSURANCE SECTION
+   ============================================ */
+
+.insurance {
+    background: #fff;
+    padding: 60px 20px;
+}
+
+.insurance h2 {
+    font-size: 22px;
+    color: #2E334A;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.insurance-intro {
+    text-align: center;
+    color: #2E334A;
+    font-size: 18px;
+    margin-bottom: 40px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    opacity: 0.8;
+}
+
+.insurance-logos {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+    align-items: center;
+    justify-items: center;
+    margin-bottom: 32px;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.insurance-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+    transition: transform 0.3s, box-shadow 0.3s;
+    width: 100%;
+    height: 120px;
+}
+
+.insurance-logo:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.insurance-logo img {
+    max-width: 100%;
+    max-height: 80px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    filter: grayscale(20%);
+    transition: filter 0.3s;
+}
+
+.insurance-logo:hover img {
+    filter: grayscale(0%);
+}
+
+.insurance-note {
+    text-align: center;
+    color: #2E334A;
+    font-size: 16px;
+    margin-bottom: 32px;
+    opacity: 0.8;
+}
+
+@media (min-width: 640px) {
+    .insurance-logos {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .insurance h2 {
+        font-size: 26px;
+    }
+}
+
+@media (min-width: 768px) {
+    .insurance {
+        padding: 80px 20px;
+    }
+    
+    .insurance-logos {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 24px;
+    }
+    
+    .insurance-logo {
+        height: 100px;
+    }
+    
+    .insurance h2 {
+        font-size: 32px;
+    }
+}
+
 /* Focus styles for keyboard navigation */
 *:focus-visible {
-    outline: 2px solid #0050A4;
+    outline: 2px solid #2E334A;
     outline-offset: 2px;
 }
 
@@ -941,7 +1060,7 @@ section {
     position: absolute;
     top: -40px;
     left: 0;
-    background: #0050A4;
+    background: #2E334A;
     color: #fff;
     padding: 8px;
     text-decoration: none;
