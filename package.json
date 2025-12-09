@@ -4,8 +4,7 @@
   "description": "Landing page for Butterfly Effects Deerfield Beach ABA Therapy Center",
   "main": "index.html",
   "scripts": {
-    "start": "npx serve -s . -l 3000",
-    "dev": "npx serve -s . -l 3000"
+    "start": "npx serve -s . -l $PORT || npx serve -s . -l 3000"
   },
   "keywords": [
     "ABA therapy",
