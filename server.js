@@ -1,53 +1,49 @@
-// Handle uncaught errors
-process.on('uncaughtException', (error) => {
-    console.error('Uncaught Exception:', error);
-    process.exit(1);
-});
-
-process.on('unhandledRejection', (reason, promise) => {
-    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-});
-
+// Simple Express server for Railway deployment
 const express = require('express');
 const cors = require('cors');
 const nodemailer = require('nodemailer');
 const path = require('path');
+const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-console.log('Starting server...');
-console.log('Node version:', process.version);
-
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static('.'));
+
+// Serve static files
+app.use(express.static(__dirname));
 
 // Email configuration
-// Use environment variables for email credentials
-// Required: SMTP_USER, SMTP_PASS
-// Optional: SMTP_HOST (default: smtp.gmail.com), SMTP_PORT (default: 587)
 let transporter = null;
-
 if (process.env.SMTP_USER && process.env.SMTP_PASS) {
-    transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST || 'smtp.gmail.com',
-        port: parseInt(process.env.SMTP_PORT || '587'),
-        secure: false, // true for 465, false for other ports
-        auth: {
-            user: process.env.SMTP_USER,
-            pass: process.env.SMTP_PASS,
-        },
-    });
+    try {
+        transporter = nodemailer.createTransport({
+            host: process.env.SMTP_HOST || 'smtp.gmail.com',
+            port: parseInt(process.env.SMTP_PORT || '587'),
+            secure: false,
+            auth: {
+                user: process.env.SMTP_USER,
+                pass: process.env.SMTP_PASS,
+            },
+        });
+        console.log('✅ Email transporter configured');
+    } catch (error) {
+        console.warn('⚠️ Email configuration error:', error.message);
+    }
 } else {
-    console.warn('Warning: SMTP credentials not configured. Email sending will fail.');
-    console.warn('Please set SMTP_USER and SMTP_PASS environment variables in Railway.');
+    console.warn('⚠️ SMTP credentials not configured. Email sending will fail.');
 }
 
-// Health check endpoint
+// Health check
 app.get('/health', (req, res) => {
-    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+    res.json({ 
+        status: 'ok', 
+        timestamp: new Date().toISOString(),
+        port: PORT,
+        nodeVersion: process.version
+    });
 });
 
 // Email endpoint
@@ -55,7 +51,6 @@ app.post('/api/sendLead', async (req, res) => {
     try {
         const { name, phone, pageUrl } = req.body;
 
-        // Validate input
         if (!name || !phone) {
             return res.status(400).json({ 
                 success: false, 
@@ -63,7 +58,6 @@ app.post('/api/sendLead', async (req, res) => {
             });
         }
 
-        // Basic phone validation (contains digits)
         if (!/\d/.test(phone)) {
             return res.status(400).json({ 
                 success: false, 
@@ -71,7 +65,6 @@ app.post('/api/sendLead', async (req, res) => {
             });
         }
 
-        // Check if email is configured
         if (!transporter) {
             return res.status(500).json({ 
                 success: false, 
@@ -86,7 +79,6 @@ Phone: ${phone}
 Page URL: ${pageUrl || 'Not provided'}
 Time: ${timestamp}`;
 
-        // Send email
         const mailOptions = {
             from: process.env.SMTP_USER || 'noreply@butterflyeffects.com',
             to: 'georgii.zalygin@butterflyeffects.com',
@@ -95,7 +87,6 @@ Time: ${timestamp}`;
         };
 
         await transporter.sendMail(mailOptions);
-
         res.json({ success: true });
     } catch (error) {
         console.error('Error sending email:', error);
@@ -106,41 +97,33 @@ Time: ${timestamp}`;
     }
 });
 
-// Serve static files for all other routes (SPA fallback)
-app.get('*', (req, res, next) => {
-    // Skip API routes
-    if (req.path.startsWith('/api') || req.path.startsWith('/health')) {
-        return next();
-    }
-    
+// Serve index.html for all other routes
+app.get('*', (req, res) => {
     const indexPath = path.join(__dirname, 'index.html');
-    res.sendFile(indexPath, (err) => {
-        if (err) {
-            console.error('Error sending index.html:', err);
-            res.status(404).send('Page not found');
-        }
-    });
+    if (fs.existsSync(indexPath)) {
+        res.sendFile(indexPath);
+    } else {
+        res.status(404).send('index.html not found');
+    }
 });
 
 // Start server
 const server = app.listen(PORT, '0.0.0.0', () => {
-    console.log(`✅ Server running on port ${PORT}`);
-    console.log(`📁 Working directory: ${__dirname}`);
-    console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
-    console.log(`📧 SMTP configured: ${!!(process.env.SMTP_USER && process.env.SMTP_PASS)}`);
-    console.log(`🚀 Server ready to accept connections`);
-}).on('error', (err) => {
-    console.error('❌ Server failed to start:', err);
-    console.error('Error details:', err.message);
+    console.log('='.repeat(50));
+    console.log('🚀 Server started successfully!');
+    console.log(`📡 Listening on port: ${PORT}`);
+    console.log(`📁 Directory: ${__dirname}`);
+    console.log(`🔧 Node version: ${process.version}`);
+    console.log(`📧 Email configured: ${!!transporter}`);
+    console.log('='.repeat(50));
+});
+
+server.on('error', (err) => {
+    console.error('❌ Server error:', err);
     process.exit(1);
 });
 
-// Graceful shutdown
 process.on('SIGTERM', () => {
-    console.log('SIGTERM received, shutting down gracefully');
-    server.close(() => {
-        console.log('Server closed');
-        process.exit(0);
-    });
+    console.log('SIGTERM received, shutting down');
+    server.close(() => process.exit(0));
 });
-
