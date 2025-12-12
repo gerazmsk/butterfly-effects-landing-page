@@ -1,12 +1,20 @@
 // Simple Express server for Railway deployment
+console.log('🔵 Starting server initialization...');
+console.log('🔵 Node version:', process.version);
+console.log('🔵 PORT environment variable:', process.env.PORT);
+
 const express = require('express');
 const cors = require('cors');
 const nodemailer = require('nodemailer');
 const path = require('path');
 const fs = require('fs');
 
+console.log('🔵 Express loaded, creating app...');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+console.log('🔵 App created, PORT:', PORT);
 
 // Middleware
 app.use(cors());
@@ -108,6 +116,9 @@ app.get('*', (req, res) => {
 });
 
 // Start server
+console.log('🔵 About to start server on port:', PORT);
+console.log('🔵 Binding to 0.0.0.0');
+
 const server = app.listen(PORT, '0.0.0.0', () => {
     console.log('='.repeat(50));
     console.log('🚀 Server started successfully!');
@@ -116,6 +127,12 @@ const server = app.listen(PORT, '0.0.0.0', () => {
     console.log(`🔧 Node version: ${process.version}`);
     console.log(`📧 Email configured: ${!!transporter}`);
     console.log('='.repeat(50));
+    console.log('✅ Server is ready to accept connections');
+}).on('error', (err) => {
+    console.error('❌ Failed to start server:', err);
+    console.error('Error code:', err.code);
+    console.error('Error message:', err.message);
+    process.exit(1);
 });
 
 server.on('error', (err) => {
