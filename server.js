@@ -122,12 +122,25 @@ app.get('*', (req, res, next) => {
     });
 });
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-    console.log(`SMTP configured: ${!!(process.env.SMTP_USER && process.env.SMTP_PASS)}`);
+// Start server
+const server = app.listen(PORT, '0.0.0.0', () => {
+    console.log(`✅ Server running on port ${PORT}`);
+    console.log(`📁 Working directory: ${__dirname}`);
+    console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`📧 SMTP configured: ${!!(process.env.SMTP_USER && process.env.SMTP_PASS)}`);
+    console.log(`🚀 Server ready to accept connections`);
 }).on('error', (err) => {
-    console.error('Server failed to start:', err);
+    console.error('❌ Server failed to start:', err);
+    console.error('Error details:', err.message);
     process.exit(1);
+});
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+    console.log('SIGTERM received, shutting down gracefully');
+    server.close(() => {
+        console.log('Server closed');
+        process.exit(0);
+    });
 });
 
