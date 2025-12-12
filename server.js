@@ -1,3 +1,13 @@
+// Handle uncaught errors
+process.on('uncaughtException', (error) => {
+    console.error('Uncaught Exception:', error);
+    process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
 const express = require('express');
 const cors = require('cors');
 const nodemailer = require('nodemailer');
@@ -5,6 +15,9 @@ const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+console.log('Starting server...');
+console.log('Node version:', process.version);
 
 // Middleware
 app.use(cors());
@@ -31,6 +44,11 @@ if (process.env.SMTP_USER && process.env.SMTP_PASS) {
     console.warn('Warning: SMTP credentials not configured. Email sending will fail.');
     console.warn('Please set SMTP_USER and SMTP_PASS environment variables in Railway.');
 }
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
 
 // Email endpoint
 app.post('/api/sendLead', async (req, res) => {
@@ -95,5 +113,10 @@ app.get('*', (req, res) => {
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
+    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`SMTP configured: ${!!(process.env.SMTP_USER && process.env.SMTP_PASS)}`);
+}).on('error', (err) => {
+    console.error('Server failed to start:', err);
+    process.exit(1);
 });
 
