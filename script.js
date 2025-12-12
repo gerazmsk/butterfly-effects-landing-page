@@ -156,8 +156,22 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize chat widget
     function initChatWidget() {
-        // Show lead form initially
-        showLeadForm();
+        // Check if lead was already submitted in this session
+        const leadSubmitted = sessionStorage.getItem('leadSubmitted') === 'true';
+        chatState.leadFormCompleted = leadSubmitted;
+        
+        if (leadSubmitted) {
+            // Lead already submitted, show Q&A mode
+            chatWidgetFormContainer.style.display = 'none';
+            chatWidgetInputContainer.style.display = 'flex';
+            // Show greeting if messages area is empty
+            if (chatWidgetMessages.children.length === 0) {
+                addMessage('bot', getGreetingMessage());
+            }
+        } else {
+            // Show lead form initially
+            showLeadForm();
+        }
         
         // Toggle chat widget
         chatWidgetToggle.addEventListener('click', function() {
@@ -167,12 +181,6 @@ document.addEventListener('DOMContentLoaded', function() {
         chatWidgetClose.addEventListener('click', function() {
             toggleChatWidget();
         });
-        
-        // Handle form submission
-        const form = document.getElementById('lead-capture-form');
-        if (form) {
-            form.addEventListener('submit', handleLeadFormSubmit);
-        }
         
         // Handle message sending
         chatWidgetSend.addEventListener('click', handleSendMessage);
@@ -197,16 +205,20 @@ document.addEventListener('DOMContentLoaded', function() {
     // Show lead capture form
     function showLeadForm() {
         chatWidgetFormContainer.innerHTML = `
+            <div class="chat-widget-form-instruction">
+                <p>Please leave your name and phone number so our team can contact you about ABA therapy in Deerfield Beach.</p>
+            </div>
             <form id="lead-capture-form" class="chat-widget-form">
                 <div class="chat-widget-form-group">
-                    <label for="lead-name">Your Name</label>
-                    <input type="text" id="lead-name" name="name" required>
+                    <label for="lead-name">Your name</label>
+                    <input type="text" id="lead-name" name="name" placeholder="Full name" required>
                 </div>
                 <div class="chat-widget-form-group">
-                    <label for="lead-phone">Phone Number</label>
-                    <input type="tel" id="lead-phone" name="phone" required>
+                    <label for="lead-phone">Phone number</label>
+                    <input type="tel" id="lead-phone" name="phone" placeholder="Best number to reach you" required>
                 </div>
                 <button type="submit" class="chat-widget-form-submit">Submit</button>
+                <p class="chat-widget-privacy-note">Your information is stored securely on Butterfly Effects servers and is never shared with third parties.</p>
             </form>
         `;
         chatWidgetFormContainer.style.display = 'block';
@@ -229,8 +241,15 @@ document.addEventListener('DOMContentLoaded', function() {
         const name = nameInput.value.trim();
         const phone = phoneInput.value.trim();
         
+        // Validate fields
         if (!name || !phone) {
             addMessage('bot', 'Please fill in both your name and phone number.');
+            return;
+        }
+        
+        // Validate phone contains digits
+        if (!/\d/.test(phone)) {
+            addMessage('bot', 'Please enter a valid phone number.');
             return;
         }
         
@@ -243,108 +262,78 @@ document.addEventListener('DOMContentLoaded', function() {
         submitButton.disabled = true;
         submitButton.textContent = 'Sending...';
         
-        // Send email using form submission (will work with email services like Formspree, EmailJS, or backend)
+        // Send email via backend
         try {
             await sendLeadEmail(name, phone);
+            
+            // Mark lead as submitted in session storage
+            sessionStorage.setItem('leadSubmitted', 'true');
+            chatState.leadFormCompleted = true;
             
             // Hide form
             chatWidgetFormContainer.style.display = 'none';
             
             // Show thank you message
-            addMessage('bot', `Thank you, ${name}! We've received your information and will contact you soon.`);
+            addMessage('bot', 'Thank you for reaching out to Butterfly Effects in Deerfield Beach. We\'ve received your contact details, and our team will follow up with you soon. In the meantime, I can answer a few questions about our ABA services here in Deerfield Beach.');
             
-            // Wait a moment, then show greeting
+            // Show greeting message immediately after
             setTimeout(() => {
-                addMessage('bot', 'Hi! I\'m here to help answer questions about our Deerfield Beach ABA therapy programs. What would you like to know?');
+                addMessage('bot', getGreetingMessage());
                 
                 // Show input container
                 chatWidgetInputContainer.style.display = 'flex';
-                chatState.leadFormCompleted = true;
                 
                 // Focus input
                 chatWidgetInput.focus();
-            }, 1500);
+            }, 500);
             
         } catch (error) {
             console.error('Error sending email:', error);
             submitButton.disabled = false;
             submitButton.textContent = 'Submit';
-            addMessage('bot', 'There was an error submitting your information. Please try again or contact us directly.');
+            addMessage('bot', 'Something went wrong while sending your information. Please try again later.');
+            // Do NOT continue to Q&A mode - user stays on form
         }
     }
     
-    // Send lead email
+    // Send lead email via backend endpoint
     async function sendLeadEmail(name, phone) {
-        const emailTo = 'georgii.zalygin@butterflyeffects.com';
-        const emailSubject = 'New Lead - Deerfield Beach ABA Chat Widget';
-        const emailBody = `New Lead from Chat Widget\n\nName: ${name}\nPhone: ${phone}\n\nSubmitted from: ${window.location.href}`;
+        const pageUrl = window.location.href;
         
-        // Option 1: Use EmailJS, Formspree, or similar service
-        // Replace the endpoint below with your email service endpoint
-        const emailServiceEndpoint = 'YOUR_EMAIL_SERVICE_ENDPOINT_HERE';
+        const response = await fetch('/api/sendLead', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: name,
+                phone: phone,
+                pageUrl: pageUrl
+            })
+        });
         
-        // Option 2: Use a backend API endpoint
-        // const backendEndpoint = '/api/send-email';
+        const data = await response.json();
         
-        // For now, we'll use a simple approach that works with Formspree or similar services
-        // To configure: Replace 'YOUR_EMAIL_SERVICE_ENDPOINT_HERE' with your actual endpoint
-        // Or uncomment and configure the fetch() example below
-        
-        try {
-            // Example using Formspree (uncomment and configure):
-            /*
-            const formData = new FormData();
-            formData.append('name', name);
-            formData.append('phone', phone);
-            formData.append('_to', emailTo);
-            formData.append('_subject', emailSubject);
-            
-            const response = await fetch('https://formspree.io/f/YOUR_FORM_ID', {
-                method: 'POST',
-                body: formData
-            });
-            
-            if (!response.ok) {
-                throw new Error('Failed to send email');
-            }
-            */
-            
-            // Example using fetch with JSON (for custom backend):
-            /*
-            const response = await fetch('/api/send-email', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    to: emailTo,
-                    subject: emailSubject,
-                    body: emailBody,
-                    name: name,
-                    phone: phone
-                })
-            });
-            
-            if (!response.ok) {
-                throw new Error('Failed to send email');
-            }
-            */
-            
-            // For demo/testing: Simulate successful email send
-            // In production, replace this with actual email service call above
-            await new Promise(resolve => setTimeout(resolve, 500));
-            
-            // Log for debugging (remove in production)
-            console.log('Lead submitted:', { name, phone, emailTo });
-            
-        } catch (error) {
-            console.error('Email sending error:', error);
-            throw error;
+        if (!response.ok || !data.success) {
+            throw new Error(data.error || 'Failed to send email');
         }
+        
+        return data;
+    }
+    
+    // Get greeting message
+    function getGreetingMessage() {
+        return `Welcome to Butterfly Effects ABA Therapy Center in Deerfield Beach, FL. We provide full-day and after-school ABA programs for children with autism, focusing on communication, social skills, independence, and school readiness.
+
+To make sure I give you the most helpful information, what would you like to know first?
+– The types of ABA programs we offer in Deerfield Beach
+– Whether your child's age fits our programs
+– How the enrollment and insurance process works`;
     }
     
     // Handle sending a message
     function handleSendMessage() {
+        // Only process messages if lead form has been completed
         if (!chatState.leadFormCompleted) {
             return;
         }
@@ -414,6 +403,11 @@ document.addEventListener('DOMContentLoaded', function() {
             return getInsuranceResponse(lowerMessage);
         }
         
+        // INTENT 4: Address/Location (higher priority than fallback)
+        if (matchesAddressIntent(lowerMessage)) {
+            return getAddressResponse();
+        }
+        
         // FALLBACK
         return getFallbackResponse();
     }
@@ -455,6 +449,20 @@ document.addEventListener('DOMContentLoaded', function() {
             'in-network', 'out-of-network', 'cost', 'price', 'how much',
             'aetna', 'blue cross', 'blue shield', 'bcbs', 'cigna',
             'united', 'unitedhealthcare', 'tricare', 'medicaid'
+        ];
+        return triggers.some(trigger => message.includes(trigger));
+    }
+    
+    function matchesAddressIntent(message) {
+        const triggers = [
+            'address',
+            'location',
+            'where are you',
+            'where are you located',
+            'center address',
+            'clinic address',
+            'адрес',   // Cyrillic
+            'где вы находитесь'   // Cyrillic
         ];
         return triggers.some(trigger => message.includes(trigger));
     }
@@ -541,6 +549,16 @@ Our intake team will review your child's needs and your family's schedule to rec
         return `Butterfly Effects works with many major insurance providers, but coverage and out-of-pocket costs can vary depending on your specific plan and state. For ABA therapy at our Deerfield Beach center, our client services team will review your insurance information, explain what is covered, and walk you through any next steps.
 
 Because each situation is different, the most accurate way to understand your coverage is to let our team verify your benefits during the intake process.`;
+    }
+    
+    function getAddressResponse() {
+        return `Our Deerfield Beach ABA center is located at:
+
+Butterfly Effects ABA Therapy Center – Deerfield Beach
+350 Fairway Drive, Suite 101B
+Deerfield Beach, FL 33341
+
+If you need directions or have questions about drop-off and pick-up, our team can help during your intake call.`;
     }
     
     function getFallbackResponse() {

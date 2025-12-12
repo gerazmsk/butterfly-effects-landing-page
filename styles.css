@@ -1383,10 +1383,29 @@ section {
     border-top: 1px solid #e0e0e0;
 }
 
+.chat-widget-form-instruction {
+    margin-bottom: 16px;
+}
+
+.chat-widget-form-instruction p {
+    font-size: 14px;
+    color: #2E334A;
+    line-height: 1.6;
+    margin: 0;
+}
+
 .chat-widget-form {
     display: flex;
     flex-direction: column;
     gap: 16px;
+}
+
+.chat-widget-privacy-note {
+    font-size: 12px;
+    color: #666;
+    line-height: 1.5;
+    margin-top: 8px;
+    text-align: center;
 }
 
 .chat-widget-form-group {
