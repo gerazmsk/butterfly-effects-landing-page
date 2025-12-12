@@ -106,8 +106,13 @@ Time: ${timestamp}`;
     }
 });
 
-// Serve static files for all other routes
-app.get('*', (req, res) => {
+// Serve static files for all other routes (SPA fallback)
+app.get('*', (req, res, next) => {
+    // Skip API routes
+    if (req.path.startsWith('/api') || req.path.startsWith('/health')) {
+        return next();
+    }
+    
     const indexPath = path.join(__dirname, 'index.html');
     res.sendFile(indexPath, (err) => {
         if (err) {
