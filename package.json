@@ -2,9 +2,9 @@
   "name": "butterfly-effects-landing-page",
   "version": "1.0.0",
   "description": "Landing page for Butterfly Effects Deerfield Beach ABA Therapy Center",
-  "main": "server.js",
+  "main": "index.html",
   "scripts": {
-    "start": "node server.js"
+    "start": "serve -s . -l ${PORT:-3000}"
   },
   "keywords": [
     "ABA therapy",
@@ -15,9 +15,6 @@
   "author": "Butterfly Effects",
   "license": "UNLICENSED",
   "dependencies": {
-    "express": "^4.18.2",
-    "cors": "^2.8.5",
-    "nodemailer": "^6.9.7"
+    "serve": "^14.2.5"
   }
 }
-
