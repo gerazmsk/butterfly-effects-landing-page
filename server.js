@@ -1,146 +1,65 @@
-// Simple Express server for Railway deployment
-console.log('🔵 Starting server initialization...');
-console.log('🔵 Node version:', process.version);
-console.log('🔵 PORT environment variable:', process.env.PORT);
+// Minimal Express server for Railway
+console.log('=== SERVER STARTING ===');
+console.log('Node version:', process.version);
+console.log('PORT env:', process.env.PORT);
 
 const express = require('express');
-const cors = require('cors');
-const nodemailer = require('nodemailer');
 const path = require('path');
-const fs = require('fs');
-
-console.log('🔵 Express loaded, creating app...');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-console.log('🔵 App created, PORT:', PORT);
-
-// Middleware
-app.use(cors());
+// Basic middleware
 app.use(express.json());
-
-// Serve static files
 app.use(express.static(__dirname));
 
-// Email configuration
-let transporter = null;
-if (process.env.SMTP_USER && process.env.SMTP_PASS) {
-    try {
-        transporter = nodemailer.createTransport({
-            host: process.env.SMTP_HOST || 'smtp.gmail.com',
-            port: parseInt(process.env.SMTP_PORT || '587'),
-            secure: false,
-            auth: {
-                user: process.env.SMTP_USER,
-                pass: process.env.SMTP_PASS,
-            },
-        });
-        console.log('✅ Email transporter configured');
-    } catch (error) {
-        console.warn('⚠️ Email configuration error:', error.message);
-    }
-} else {
-    console.warn('⚠️ SMTP credentials not configured. Email sending will fail.');
-}
+// Test endpoint
+app.get('/test', (req, res) => {
+    res.json({ message: 'Server is working!', timestamp: new Date().toISOString() });
+});
 
 // Health check
 app.get('/health', (req, res) => {
     res.json({ 
         status: 'ok', 
-        timestamp: new Date().toISOString(),
         port: PORT,
-        nodeVersion: process.version
+        nodeVersion: process.version,
+        timestamp: new Date().toISOString()
     });
 });
 
-// Email endpoint
-app.post('/api/sendLead', async (req, res) => {
-    try {
-        const { name, phone, pageUrl } = req.body;
-
-        if (!name || !phone) {
-            return res.status(400).json({ 
-                success: false, 
-                error: 'Name and phone are required' 
-            });
-        }
-
-        if (!/\d/.test(phone)) {
-            return res.status(400).json({ 
-                success: false, 
-                error: 'Phone number must contain digits' 
-            });
-        }
-
-        if (!transporter) {
-            return res.status(500).json({ 
-                success: false, 
-                error: 'Email service not configured' 
-            });
-        }
-
-        const timestamp = new Date().toISOString();
-        const emailBody = `New ABA lead from Deerfield Beach landing:
-Name: ${name}
-Phone: ${phone}
-Page URL: ${pageUrl || 'Not provided'}
-Time: ${timestamp}`;
-
-        const mailOptions = {
-            from: process.env.SMTP_USER || 'noreply@butterflyeffects.com',
-            to: 'georgii.zalygin@butterflyeffects.com',
-            subject: 'New ABA lead – Deerfield Beach landing',
-            text: emailBody,
-        };
-
-        await transporter.sendMail(mailOptions);
-        res.json({ success: true });
-    } catch (error) {
-        console.error('Error sending email:', error);
-        res.status(500).json({ 
-            success: false, 
-            error: 'Failed to send email' 
-        });
-    }
+// Email endpoint (simplified - will add back if needed)
+app.post('/api/sendLead', (req, res) => {
+    console.log('Lead received:', req.body);
+    // For now, just return success (email can be configured later)
+    res.json({ 
+        success: true, 
+        message: 'Lead received (email not configured yet)' 
+    });
 });
 
-// Serve index.html for all other routes
+// Serve index.html for all routes
 app.get('*', (req, res) => {
-    const indexPath = path.join(__dirname, 'index.html');
-    if (fs.existsSync(indexPath)) {
-        res.sendFile(indexPath);
-    } else {
-        res.status(404).send('index.html not found');
-    }
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // Start server
-console.log('🔵 About to start server on port:', PORT);
-console.log('🔵 Binding to 0.0.0.0');
-
+console.log('Starting server on port:', PORT);
 const server = app.listen(PORT, '0.0.0.0', () => {
-    console.log('='.repeat(50));
-    console.log('🚀 Server started successfully!');
-    console.log(`📡 Listening on port: ${PORT}`);
-    console.log(`📁 Directory: ${__dirname}`);
-    console.log(`🔧 Node version: ${process.version}`);
-    console.log(`📧 Email configured: ${!!transporter}`);
-    console.log('='.repeat(50));
-    console.log('✅ Server is ready to accept connections');
-}).on('error', (err) => {
-    console.error('❌ Failed to start server:', err);
-    console.error('Error code:', err.code);
-    console.error('Error message:', err.message);
-    process.exit(1);
+    console.log('========================================');
+    console.log('✅ SERVER STARTED SUCCESSFULLY');
+    console.log('📡 Port:', PORT);
+    console.log('🌐 Server ready!');
+    console.log('========================================');
 });
 
 server.on('error', (err) => {
-    console.error('❌ Server error:', err);
+    console.error('❌ SERVER ERROR:', err);
     process.exit(1);
 });
 
+// Keep process alive
 process.on('SIGTERM', () => {
-    console.log('SIGTERM received, shutting down');
+    console.log('SIGTERM received');
     server.close(() => process.exit(0));
 });
