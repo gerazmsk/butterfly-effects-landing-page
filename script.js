@@ -296,14 +296,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Send lead email via backend endpoint
+    // Send lead email via a third-party form service (e.g., Formspree)
+    // IMPORTANT: replace YOUR_FORM_ID with your actual Formspree form ID
     async function sendLeadEmail(name, phone) {
         const pageUrl = window.location.href;
         
-        const response = await fetch('/api/sendLead', {
+        const formspreeEndpoint = 'https://formspree.io/f/YOUR_FORM_ID';
+        
+        const response = await fetch(formspreeEndpoint, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
             body: JSON.stringify({
                 name: name,
@@ -312,13 +316,11 @@ document.addEventListener('DOMContentLoaded', function() {
             })
         });
         
-        const data = await response.json();
-        
-        if (!response.ok || !data.success) {
-            throw new Error(data.error || 'Failed to send email');
+        if (!response.ok) {
+            throw new Error('Failed to send email');
         }
         
-        return data;
+        return true;
     }
     
     // Get greeting message
